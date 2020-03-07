@@ -62,23 +62,29 @@ public class Server {
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
-                Log.i("WSSERVER", "onClose" + reason);
+                String log = "Disconnected from server: Code=" +
+                        code + "Reason=" + reason;
+                Log.i("WSSERVER", log);
             }
 
             @Override
             public void onError(Exception ex) {
-                Log.i("WSSERVER", "onError" + ex.toString());
+                Log.e("WSSERVER", "Error: " + ex.toString());
             }
         };
         client.connect();
     }
 
     public void disconnect() {
-        client.close();
+        if (client != null)
+            client.close();
     }
 
     private void onIncomingTextMessage(String encodedMessage) {
         Protocol.Message message = Protocol.unpackMessage(encodedMessage);
+        if (message == null)
+            return;
+
         String senderName = namesMap.get(message.getSender());
         if (senderName == null || senderName.isEmpty())
             senderName = "<unknown>";
@@ -111,12 +117,16 @@ public class Server {
 
     private void onUserStatus(String encodedMessage) {
         Protocol.UserStatus status = Protocol.unpackStatus(encodedMessage);
+        if (status == null)
+            return;
+
         Protocol.User user = status.getUser();
+        Long userId = user.getId();
         String userName = user.getName();
         if (status.isConnected()) {
-            namesMap.put(user.getId(), userName);
+            namesMap.put(userId, userName);
         } else {
-            namesMap.remove(user.getId());
+            namesMap.remove(userId);
         }
         countConsumer.accept(new StatusNotification(
                 namesMap.size(), userName, status.isConnected()));

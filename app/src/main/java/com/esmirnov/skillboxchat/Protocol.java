@@ -108,16 +108,19 @@ public class Protocol {
     public static int getType(String json) {
         if (json == null || json.length() == 0)
             return -1;
-        return Integer.valueOf(json.substring(0, 1));
+        return Integer.parseInt(json.substring(0, 1));
     }
 
     public static UserStatus unpackStatus(String json) {
+        if (json == null || json.isEmpty())
+            return null;
         Gson g = new Gson();
         return g.fromJson(json.substring(1), UserStatus.class);
     }
 
     public static Message unpackMessage(String json) {
-        Gson g = new Gson();
+        if (json == null || json.isEmpty())
+            return null;        Gson g = new Gson();
         return g.fromJson(json.substring(1), Message.class);
     }
 

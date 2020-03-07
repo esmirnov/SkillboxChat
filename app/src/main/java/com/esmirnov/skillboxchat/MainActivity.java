@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("Your name:");
         final EditText nameInput = new EditText(this);
         nameInput.setMaxLines(1);
+        nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(nameInput);
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
